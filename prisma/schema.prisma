@@ -1,0 +1,24 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = "postgresql://neondb_owner:npg_02ejtmlvcYfx@ep-odd-scene-ahc4a6p7-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require"
+  directUrl = "postgresql://neondb_owner:npg_02ejtmlvcYfx@ep-odd-scene-ahc4a6p7-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require"
+}
+
+model PlantillaPrompt {
+  id               Int      @id @default(autoincrement())
+  etapa            String
+  nivel            String
+  bloqueTarea      String
+  bloqueDerecho    String
+  activo           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("plantillas_prompts")
+}
