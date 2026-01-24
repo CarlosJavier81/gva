@@ -10,14 +10,14 @@ export async function POST(request) {
     const { fase, rama, etapa, hechos, regimen } = body;
 
     // Buscamos en el modelo PlantillaPrompt (que ahora apunta a prompts_v2)
-    const plantilla = await prisma.plantillaPrompt.findFirst({
-      where: {
-        faseId: parseInt(fase),
-        rama: rama,
-        etapa: etapa,
-        activo: true
-      }
-    });
+    const plantilla = await prisma.promptV2.findFirst({ 
+  where: {
+    faseId: parseInt(fase),
+    rama: rama,
+    etapa: etapa,
+    activo: true
+  }
+});
 
     if (!plantilla) {
       return NextResponse.json({ 

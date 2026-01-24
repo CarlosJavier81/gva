@@ -10,7 +10,7 @@ datasource db {
   directUrl = "postgresql://neondb_owner:npg_02ejtmlvcYfx@ep-odd-scene-ahc4a6p7-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require"
 }
 
-model PlantillaPrompt {
+model PromptV2 {
   id             Int      @id @default(autoincrement())
   rama           String?
   etapa          String?
@@ -20,5 +20,5 @@ model PlantillaPrompt {
   bloqueDerecho  String?  @map("bloque_derecho")
   activo         Boolean? @default(true)
 
-  @@map("prompts_v2")
+  @@map("prompts_v2") // La tabla física en Neon
 }
