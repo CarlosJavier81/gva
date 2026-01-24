@@ -11,14 +11,14 @@ datasource db {
 }
 
 model PlantillaPrompt {
-  id               Int      @id @default(autoincrement())
-  etapa            String
-  nivel            String
-  bloqueTarea      String
-  bloqueDerecho    String
-  activo           Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  rama           String   
+  etapa          String   
+  faseId         Int      
+  promptSistema  String   
+  bloqueTarea    String   
+  bloqueDerecho  String   
+  activo         Boolean  @default(true)
 
   @@map("plantillas_prompts")
 }
