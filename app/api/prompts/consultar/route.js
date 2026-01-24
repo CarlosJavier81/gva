@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function POST(request) {
+  console.log("Nueva consulta recibida para prompts_v2");
   try {
     const body = await request.json();
     const { fase, rama, etapa, hechos, regimen } = body;
