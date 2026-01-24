@@ -14,11 +14,11 @@ model PlantillaPrompt {
   id             Int      @id @default(autoincrement())
   rama           String?
   etapa          String?
-  faseId         Int      @map("faseId")      // <--- Asegúrate que diga faseId
-  promptSistema  String?  @map("promptSistema")
-  bloqueTarea    String?
-  bloqueDerecho  String?
+  faseId         Int      @map("fase_id")
+  promptSistema  String?  @map("prompt_sistema")
+  bloqueTarea    String?  @map("bloque_tarea")
+  bloqueDerecho  String?  @map("bloque_derecho")
   activo         Boolean? @default(true)
 
-  @@map("plantillas_prompts")
+  @@map("prompts_v2")
 }
