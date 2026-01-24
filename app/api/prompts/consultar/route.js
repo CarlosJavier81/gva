@@ -1,75 +1,59 @@
-import { PrismaClient } from '@prisma/client'
+import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 
-const prisma = global.prisma || new PrismaClient()
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma
+const prisma = new PrismaClient();
 
 export async function POST(request) {
   try {
-    // Recibimos los nuevos datos desde el WordPress
-    const { fase, regimen, hechos, rama, etapa } = await request.json()
-    
-    // 1. Buscamos la plantilla usando la Fase y la Rama (Laboral)
+    const body = await request.json();
+    const { fase, rama, etapa, hechos, regimen } = body;
+
+    // Buscamos en el modelo PlantillaPrompt (que ahora apunta a prompts_v2)
     const plantilla = await prisma.plantillaPrompt.findFirst({
-      where: { 
-        faseId: parseInt(fase), // Ahora filtramos por el número de fase
-        rama: rama,             // 'Laboral'
-        etapa: etapa,           // 'Prelitigio'
-        activo: true 
+      where: {
+        faseId: parseInt(fase),
+        rama: rama,
+        etapa: etapa,
+        activo: true
       }
-    })
+    });
 
     if (!plantilla) {
-      return new Response(JSON.stringify({ success: false, error: "Fase no configurada en la base de datos" }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return NextResponse.json({ 
+        success: false, 
+        error: "No se encontró una plantilla para esta fase." 
+      }, { status: 404 });
     }
 
-    // 2. Definición de Límites de Seguridad (Blindaje)
-    const limitesSeguridad = `
----
-⚠️ RESTRICCIONES DE SEGURIDAD (PERÚ 2026):
-- NO ALUCINAR: Si no existe jurisprudencia específica, usa principios generales. No inventes Casaciones.
-- ACTUALIDAD: Solo normativa vigente al 2026.
-- PRIVACIDAD: Usa [Nombre] para datos sensibles.
-- FORMATO: Markdown estructurado.
----`;
-
-    // 3. Ensamblaje Dinámico del Prompt
-    // Combinamos la base de la DB con los hechos del abogado y los límites
+    // ENSAMBLAJE: Aquí unimos la base de la DB con los hechos del usuario
     const promptFinal = `
 ${plantilla.promptSistema}
 
-ESCENARIO:
-- RÉGIMEN LABORAL: ${regimen}
-- TAREA: ${plantilla.bloqueTarea}
+TAREA:
+${plantilla.bloqueTarea}
 
-MARCO JURÍDICO BASE:
+RÉGIMEN SELECCIONADO: ${regimen}
+HECHOS DEL CASO:
+"${hechos}"
+
+MARCO LEGAL DE REFERENCIA:
 ${plantilla.bloqueDerecho}
 
-HECHOS DEL CASO A ANALIZAR:
-"""
-${hechos}
-"""
+IMPORTANTE: Responde en formato profesional, citando la base legal proporcionada.
+    `.trim();
 
-${limitesSeguridad}`;
-
-    // 4. Retornamos el prompt listo para ser usado
-    return new Response(JSON.stringify({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: {
-        bloqueTarea: promptFinal,
-        bloqueDerecho: "Verificado para régimen " + regimen
-      } 
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
+        bloqueTarea: promptFinal, // Enviamos el prompt ya armado
+        bloqueDerecho: plantilla.bloqueDerecho
+      }
+    });
 
   } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message 
+    }, { status: 500 });
   }
 }
