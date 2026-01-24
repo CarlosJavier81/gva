@@ -12,13 +12,13 @@ datasource db {
 
 model PlantillaPrompt {
   id             Int      @id @default(autoincrement())
-  rama           String   
-  etapa          String   
-  faseId         Int      
-  promptSistema  String   
-  bloqueTarea    String   
-  bloqueDerecho  String   
-  activo         Boolean  @default(true)
+  rama           String?
+  etapa          String?
+  faseId         Int      @map("faseId")         // Mapeo exacto a la DB
+  promptSistema  String?  @map("promptSistema")  // Mapeo exacto a la DB
+  bloqueTarea    String?
+  bloqueDerecho  String?
+  activo         Boolean? @default(true)
 
   @@map("plantillas_prompts")
 }
