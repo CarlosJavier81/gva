@@ -19,6 +19,5 @@ model PromptV2 {
   bloqueTarea    String?  @map("bloque_tarea")
   bloqueDerecho  String?  @map("bloque_derecho")
   activo         Boolean? @default(true)
-
-  @@map("prompts_v2") // La tabla física en Neon
+  @@map("prompts_v2")
 }
